@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>To-Do List App</title>
+    
+</head>
+<body>
+    <div class="container">
+        <h1>To-Do List</h1>
+        <div class="header">
+            <span class="menu-icon">☰</span> <!-- Menu icon -->
+            <input type="text" id="taskInput" placeholder="Add a new task...">
+            <button id="addTaskBtn">Add Task</button>
+        </div>
+        <select id="filter">
+            <option value="all">All</option>
+            <option value="completed">Completed</option>
+            <option value="pending">Pending</option>
+        </select>
+        <ul id="taskList"></ul>
+    </div>
+    <div id="editModal" class="modal">
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <h2>Edit Task</h2>
+        <input type="text" id="editTaskInput" placeholder="Edit task...">
+        <button id="saveEditBtn">Save</button>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const taskInput = document.getElementById('taskInput');
+        const addTaskBtn = document.getElementById('addTaskBtn');
+        const taskList = document.getElementById('taskList');
+        const filter = document.getElementById('filter');
+        const menuIcon = document.querySelector('.menu-icon');
+        const editModal = document.getElementById('editModal');
+        const editTaskInput = document.getElementById('editTaskInput');
+        const saveEditBtn = document.getElementById('saveEditBtn');
+        const closeModal = document.querySelector('.close');
+    
+        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        let currentEditIndex = null; //track sa edited
+    
+        // Function sa tasks
+        function renderTasks() {
+            taskList.innerHTML = '';
+            tasks.forEach((task, index) => {
+                if (filter.value === 'completed' && !task.completed) return;
+                if (filter.value === 'pending' && task.completed) return;
+    
+                const li = document.createElement('li');
+                li.textContent = task.text;
+                li.className = task.completed ? 'completed' : '';
+                li.setAttribute('data-index', index);
+    
+                // Create remove button
+                const removeBtn = document.createElement('button');
+                removeBtn.textContent = 'Remove';
+                removeBtn.className = 'remove-btn';
+                removeBtn.addEventListener('click', () => {
+                    tasks.splice(index, 1);
+                    saveTasks();
+                    renderTasks();
+                });
+    
+                // Add event listeners for task completion and removal
+                li.addEventListener('click', () => {
+                    tasks[index].completed = !tasks[index].completed;
+                    saveTasks();
+                    renderTasks();
+                });
+    
+                // edit button
+                const editBtn = document.createElement('button');
+                editBtn.textContent = 'Edit';
+                editBtn.className = 'edit-btn';
+                editBtn.addEventListener('click', () => {
+                    currentEditIndex = index; // Set para sa index for task being edited
+                    editTaskInput.value = task.text; 
+                    editModal.style.display = 'block'; // Show the modal
+                });
+                
+                li.appendChild(editBtn);
+                li.appendChild(removeBtn);
+                taskList.appendChild(li);
+            });
+        }
+    
+        // save tasks sa local storage
+        function saveTasks() {
+            localStorage.setItem('tasks', JSON.stringify(tasks));
+        }
+    
+        function addTask() {
+            const taskText = taskInput.value.trim();
+            if (taskText) {
+                tasks.push({ text: taskText, completed: false });
+                taskInput.value = '';
+                saveTasks();
+                renderTasks();
+            }
+        }
+    
+        // Event listener sa saving edits
+        saveEditBtn.addEventListener('click', () => {
+            if (currentEditIndex !== null) {
+                const newTaskText = editTaskInput.value.trim();
+                if (newTaskText !== '') {
+                    tasks[currentEditIndex].text = newTaskText; // Update sa task text
+                    saveTasks();
+                    renderTasks();
+                    editModal.style.display = 'none'; // Hide for modal haman sa saving
+                    currentEditIndex = null; // Reset the edit index
+                }
+            }
+        });
+    
+        // Event listener for closing the modal
+        closeModal.addEventListener('click', () => {
+            editModal.style.display = 'none'; // Hide the modal
+            currentEditIndex = null; // Reset the edit index
+        });
+    
+        addTaskBtn.addEventListener('click', addTask);
+        filter.addEventListener('change', renderTasks);
+        menuIcon.addEventListener('click', () => {
+            const menu = document.querySelector('.header');
+            menu.classList.toggle('visible');
+        });
+    
+    
+        addTaskBtn.addEventListener('click', addTask);
+    
+    
+        filter.addEventListener('change', renderTasks);
+    
+        menuIcon.addEventListener('click', () => {
+            const menu = document.querySelector('.header');
+            menu.classList.toggle('visible');
+        });
+    
+        ditTaskInput.addEventListener('keydown', (event) => {
+            if (event.key === 'Enter' && event.shiftKey) {
+                saveEditBtn.click();
+            }
+            });
+    
+            editTaskInput.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter') {
+                    saveEditBtn.click(); 
+                }
+            });
+        renderTasks();
+    });
+    </script>
+
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    background-color: #e0f7fa; 
+    margin: 0;
+    padding: 20px;
+}
+
+.container {
+    max-width: 600px;
+    margin: auto;
+    background: #ffffff; 
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2); 
+}
+
+h1 {
+    text-align: center;
+    color: #00796b; 
+    margin-bottom: 20px; 
+}
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.menu-icon {
+    font-size: 24px;
+    cursor: pointer; 
+    color: #00796b; 
+}
+
+input[type="text"] {
+    width: calc(100% - 120px); 
+    padding: 10px;
+    margin-right: 10px;
+    border: 1px solid #00796b; 
+    border-radius: 5px; 
+}
+
+button {
+    padding: 10px;
+    background-color: #00796b; 
+    color: white; 
+    border: none;
+    border-radius: 5px; 
+    cursor: pointer; 
+}
+
+button:hover {
+    background-color: #004d40; 
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    padding: 10px;
+    margin: 5px 0;
+    background: #b2dfdb; 
+    border-radius: 5px;
+    transition: background 0.3s ease;
+    display: flex;
+    justify-content: space-between; 
+    align-items: center; 
+}
+
+li.completed {
+    text-decoration: line-through;
+    background: #c8e6c9;
+}
+
+li:hover {
+    background: #a7ffeb; 
+}
+
+.remove-btn {
+    background-color: #e57373;
+    color: white; 
+    border: none; 
+    border-radius: 5px; 
+    padding: 5px 10px; 
+    cursor: pointer; 
+}
+
+.remove-btn:hover {
+    background-color: #c62828; 
+}
+
+.fade-in {
+    animation: fadeIn 0.5s;
+}
+
+.fade-out {
+    animation: fadeOut 0.5s;
+}
+
+.edit-btn {
+    background-color: #ffa726; 
+    color: white; 
+    border: none; 
+    border-radius: 5px; 
+    padding: 5px 10px; 
+    cursor: pointer; 
+    margin-right: 10px; 
+}
+
+.edit-btn:hover {
+    background-color: #fb8c00; 
+}
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 1; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    overflow: auto; 
+    background-color: rgb(0,0,0); 
+    background-color: rgba(0,0,0,0.4); 
+}
+
+.modal-content {
+    background-color: #fefefe;
+    margin: 15% auto; 
+    padding: 20px;
+    border: 1px solid #888;
+    width: 80%; 
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 28px;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: black;
+    text-decoration: none;
+    cursor: pointer;
+}
+    </style>
+</body>
+</html>
