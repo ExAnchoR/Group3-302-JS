@@ -6,6 +6,16 @@
     <title>Document</title>
 </head>
 <body>
-    hello world
+    <button id="login">Login</button>
+    <script>
+        var button = document.getElementById('login');
+        
+        button.addEventListener('click', toFrontPage)
+
+        function toFrontPage() {
+            window.location.href = 'front-page.html';
+        }
+    
+    </script>
 </body>
 </html>
