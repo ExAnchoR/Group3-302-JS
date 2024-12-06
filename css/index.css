@@ -1,0 +1,20 @@
+.header {
+    font-family:'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+    border: 3px solid;
+    border-radius: 25px;
+    padding: 15px;
+}
+.body {
+    background-color: #f2f2f2;
+    padding: 20px;
+    border-radius: 25px;
+    font-family:'Arial', sans-serif;
+    border: 3px solid;
+    border-bottom: 5px solid;
+    margin-top: 20px;
+    color: #333;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    
+
+}
