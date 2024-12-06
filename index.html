@@ -1,21 +1,24 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <button id="login">Login</button>
-    <script>
-        var button = document.getElementById('login');
-        
-        button.addEventListener('click', toFrontPage)
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Document</title>
+        <link rel="stylesheet" href="index.css">
+    </head>
 
-        function toFrontPage() {
-            window.location.href = 'Drafts/Draft2/index.html';
-        }
-    
-    </script>
-</body>
-</html>
+        <div class="header">
+            <button>Menu</button>
+            To Do List
+
+            <input type="text" id="toDoInput">
+        </div>
+        <div class="body">
+            <ul id="toDoList"></ul>
+        </div>
+        <div class="footer">
+            <p>Copyright &copy; Group 3 of MAWD302</p>
+        </div>
+        <script src="index.js"></script>
+    </body>
+    </html>
