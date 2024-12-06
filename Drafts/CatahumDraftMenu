@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Menu Example</title>
+
+</head>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    }
+    
+    .menu-container {
+    background-color: #333;
+    padding: 10px;
+    text-align: center;
+    }
+    
+    .menu {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    }
+    
+    .menu li {
+    display: inline-block;
+    margin-right: 20px;
+    position: relative;
+    }
+    
+    .menu a {
+    color: #fff;
+    text-decoration: none;
+    }
+    
+    .menu a:hover {
+    color: #ccc;
+    }
+    
+    .submenu {
+    display: none;
+    position: absolute;
+    background-color: #333;
+    padding: 10px;
+    border: 1px solid #444;
+    }
+    
+    .submenu li {
+    display: block;
+    margin: 10px;
+    }
+    
+    .menu li:hover .submenu {
+    display: block;
+    }
+</style>
+<body>
+<div class="menu-container">
+<ul class="menu">
+<li><a href="#">Home</a></li>
+<li><a href="#">About</a>
+<ul class="submenu">
+<li><a href="#">Our Team</a></li>
+<li><a href="#">Mission</a></li>
+</ul>
+</li>
+<li><a href="#">Services</a></li>
+<li><a href="#">Contact</a></li>
+</ul>
+</div>
+</body>
+</html>
