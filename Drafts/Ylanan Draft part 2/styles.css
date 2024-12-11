@@ -1,0 +1,98 @@
+/*general*/
+body {
+    font-family: Arial, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    background-color: #f0f0f0;
+}/* main contaner*/
+.container {
+    background-color: white;
+    padding: 20px;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+/*input area*/
+.input-container {
+    display: flex;
+    margin-bottom: 20px;
+}
+
+#taskInput {
+    flex-grow: 1;
+    padding: 5px;
+    font-size: 16px;
+}
+
+/*button*/
+button {
+    padding: 5px 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+/*filters*/
+.filter-container {
+    margin-bottom: 10px;
+}
+
+/*indevidual filter button*/
+.filter-btn {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 5px 10px;
+    margin-right: 5px;
+    cursor: pointer;
+}
+
+/*active filter button*/
+.filter-btn.active {
+    background-color: #007bff;
+    color: white;
+}
+/*task*/
+#taskList {
+    list-style-type: none;
+    padding: 0;
+}
+/*indevidual item*/
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+    animation: fadeIn 0.5s;
+}
+
+/*items*/
+.task-item.completed {
+    text-decoration: line-through;
+    color: #888;
+}
+
+/*animations tasks new and deleted*/
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+@keyframes fadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; }
+}
+
+/*animations tasks removed*/
+.task-item.removing {
+    animation: fadeOut 0.5s;
+}
+
+/*edit input*/
+.task-item input[type="text"] {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 3px;
+}
