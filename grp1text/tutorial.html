@@ -1,0 +1,492 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="logo.ico" />
+  <title>Quizzler - How to Use</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(to right, #8D72E1, #e0b7fc);
+      text-align: center;
+      font-family: Arial, sans-serif;
+      color: #333; /* Default text color for content */
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 40px;
+      background: linear-gradient(to right, #8D72E1, #6C4AB6);
+      border-bottom: 2px solid white;
+      position: sticky; /* Make header sticky */
+      top: 0;
+      z-index: 1000; /* Ensure header is above other content */
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo {
+      width: 60px;
+      height: auto;
+    }
+
+    .title {
+      font-size: 48px;
+      font-family: fantasy;
+      color: white;
+      white-space: nowrap;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    button, .button-container a.button-link {
+      padding: 5px 10px;
+      border: 2px solid white;
+      cursor: pointer;
+      border-radius: 50px;
+      background-color: #ffffff;
+      color: black;
+      text-decoration: none;
+      font-family: Arial, sans-serif;
+      font-size: 14px;
+      display: inline-block;
+    }
+    .button-container span.welcome-message {
+        color: white;
+        margin-right: 15px;
+        font-size: 16px;
+    }
+
+    /* Tutorial Specific Styles */
+    .tutorial-nav {
+        background: rgba(108, 74, 182, 0.8);
+        padding: 10px 0;
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 1px solid rgba(255,255,255,0.5);
+    }
+    .tutorial-nav ul {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+    .tutorial-nav ul li {
+        display: inline;
+        margin: 0 15px;
+    }
+    .tutorial-nav ul li a {
+        color: white;
+        text-decoration: none;
+        font-weight: bold;
+        font-size: 1em;
+    }
+    .tutorial-nav ul li a:hover {
+        color: #e0b7fc;
+    }
+
+    .tutorial-main-container {
+      width: 90%;
+      max-width: 1100px;
+      margin: 30px auto;
+      padding: 30px;
+      background: rgba(240, 230, 255, 0.95);
+      color: #444;
+      border-radius: 15px;
+      box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.25);
+      text-align: left;
+    }
+
+    .tutorial-main-container h2 {
+      font-size: 1.8em;
+      color: #6C4AB6;
+      margin-top: 30px;
+      margin-bottom: 15px;
+      padding-bottom: 8px;
+      border-bottom: 2px solid #8D72E1;
+    }
+    .tutorial-main-container h2:first-child {
+        margin-top: 0;
+    }
+
+    .tutorial-main-container h3 {
+      font-size: 1.4em;
+      color: #8D72E1;
+      margin-top: 20px;
+      margin-bottom: 10px;
+    }
+
+    .tutorial-main-container p,
+    .tutorial-main-container li {
+      line-height: 1.7;
+      margin-bottom: 12px;
+      font-size: 1em;
+    }
+
+    .tutorial-main-container ul, .tutorial-main-container ol {
+        margin-left: 25px;
+        padding-left: 10px;
+    }
+
+    .tutorial-main-container strong { /* General strong tag styling, can be overridden by specific uses */
+        color: #5a3aa0; /* Default strong color */
+    }
+    /* Specific strong for key actions in intro */
+    #introduction p strong {
+        font-weight: bold; /* Ensure it's bold */
+        color: #5a3aa0; /* Ensure consistent color with other strong tags or a distinct one if preferred */
+    }
+
+
+    .screenshot-placeholder {
+        width: 100%;
+        max-width: 550px;
+        height: 280px;
+        background-color: #e0d4f5;
+        border: 1px dashed #6C4AB6;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        font-style: italic;
+        color: #6C4AB6;
+        margin: 20px auto;
+        border-radius: 8px;
+        font-size: 0.9em;
+    }
+
+    .tip-box {
+        background-color: #f2e8ff;
+        border-left: 5px solid #6C4AB6;
+        padding: 15px;
+        margin: 25px 0;
+        border-radius: 0 8px 8px 0;
+    }
+    .tip-box p {
+        margin-bottom: 5px;
+    }
+
+    .tutorial-footer {
+      text-align: center;
+      padding: 20px;
+      margin-top: 40px;
+      color: white;
+      font-size: 0.9em;
+      background: rgba(108, 74, 182, 0.7);
+    }
+    .tutorial-footer a {
+        color: #e0b7fc;
+        text-decoration: none;
+    }
+    .tutorial-footer a:hover {
+        text-decoration: underline;
+    }
+
+
+    @media (max-width: 1200px) {
+        .tutorial-main-container {
+            width: 90%;
+        }
+    }
+    @media (max-width: 768px) {
+      .header {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+      }
+      .title {
+        font-size: 36px;
+      }
+      .button-container {
+        margin-top: 10px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .button-container button, .button-container a.button-link {
+        font-size: 13px;
+        padding: 4px 8px;
+      }
+      .tutorial-nav ul li {
+        display: block;
+        margin: 10px 0;
+      }
+      .tutorial-main-container {
+        width: 95%;
+        padding: 20px;
+      }
+      .tutorial-main-container h2 {
+        font-size: 1.6em;
+      }
+      .tutorial-main-container h3 {
+        font-size: 1.3em;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo-container">
+      <img src="logo.ico" alt="Logo" class="logo" />
+      <a href="index.html" style="text-decoration:none;"><span class="title">QUIZZLER</span></a>
+    </div>
+    <div class="button-container" id="auth-buttons-default">
+      <button class="signup">Sign Up</button>
+      <button class="login">Log In</button>
+    </div>
+    <div class="button-container" id="auth-buttons-loggedin" style="display:none;">
+      <span class="welcome-message" id="welcome-user-message"></span>
+      <a href="#" id="logout-action-link" class="button-link">Log Out</a>
+    </div>
+  </div>
+
+  <nav class="tutorial-nav">
+    <ul>
+        <li><a href="#introduction">Introduction</a></li>
+        <li><a href="#getting-started">Getting Started</a></li>
+        <li><a href="#creating-content">Creating Content</a></li>
+        <li><a href="#managing-content">Managing Content</a></li>
+        <li><a href="#presenting-quiz">Presenting Your Quiz</a></li>
+        <li><a href="#tips">Tips</a></li>
+    </ul>
+  </nav>
+
+  <div class="tutorial-main-container">
+    <section id="introduction">
+      <h2>Welcome to the Quizzler Guide!</h2>
+      <p>Quizzler is your go-to platform for <strong>creating</strong>, <strong>managing</strong>, and <strong>presenting</strong> fun and educational quizzes to your audience. This guide will walk you through everything you need to know to make the most of Quizzler as an educator or presenter.</p>
+      <p>Whether you're looking to engage your students in the classroom or deliver interactive knowledge checks, Quizzler has the tools for you!</p>
+    </section>
+
+    <section id="getting-started">
+      <h2>Getting Started with Quizzler</h2>
+      <p>First things first, let's get you set up.</p>
+      <h3>1. Signing Up</h3>
+      <p>If you're new to Quizzler, you'll need to create an account to start building your quizzes.</p>
+      <ol>
+        <li>Navigate to the <a href="signup.php">Sign Up page</a>. (You can also click the "Sign Up" button in the header).</li>
+        <li>Fill in the required details (e.g., username, email, password).</li>
+        <li>Click "Sign Up" and you're ready!</li>
+      </ol>
+      <div class="screenshot-placeholder">Placeholder: Screenshot of Sign Up Page</div>
+
+      <h3>2. Logging In</h3>
+      <p>If you already have an account:</p>
+      <ol>
+        <li>Go to the <a href="login.php">Log In page</a>. (Or click the "Log In" button in the header).</li>
+        <li>Enter your username and password.</li>
+        <li>Click "Log In" to access your Quizzler dashboard.</li>
+      </ol>
+      <div class="screenshot-placeholder">Placeholder: Screenshot of Log In Page</div>
+      <p>Once logged in, you'll see a welcome message with your username in the header, and the "Log In" / "Sign Up" buttons will change to a "Log Out" button.</p>
+    </section>
+
+    <section id="creating-content">
+        <h2>Creating Your Content</h2>
+        <p>Quizzler allows you to create "Projects" (which are like sets of terms/definitions) and then generate "Quizzes" from these projects for presentation.</p>
+        <h3>1. Creating a New Project (Terms & Definitions)</h3>
+        <ol>
+            <li>From the main page (after logging in), click the large purple <strong>"CREATE"</strong> button. This will take you to the content creation page.</li>
+            <li>Enter a <strong>Title</strong> for your project (e.g., "Chapter 1 Vocabulary", "Historical Dates").</li>
+            <li>Add your terms and their corresponding definitions one by one.
+                <ul>
+                    <li>Type a <strong>Term</strong> in the "Term" field.</li>
+                    <li>Type its <strong>Definition</strong> in the "Definition" field.</li>
+                    <li>Click the "Add Term" button to save it to your current project list.</li>
+                </ul>
+            </li>
+            <li>You'll see your added terms appear below the input fields.</li>
+            <li>Once you've added all your terms, click the <strong>"Save Project"</strong> button.</li>
+        </ol>
+        <div class="screenshot-placeholder">Placeholder: Screenshot of `addpage.html` showing term input and project saving.</div>
+
+        <h3>2. Generating Quizzes for Presentation</h3>
+        <p>After saving a project, or by selecting a saved project, you can generate quizzes ready for display.</p>
+        <ol>
+            <li>On the content creation page (often `addpage.html` or `print.html` after loading a project), you'll typically find options to generate different quiz types.</li>
+            <li><strong>Multiple Choice Quiz:</strong>
+                <ul>
+                    <li>Select the "Generate Multiple Choice Quiz" option (or similar).</li>
+                    <li>Quizzler will use your terms and definitions to create multiple-choice questions formatted for presentation.</li>
+                    <li>Save this quiz configuration with a descriptive title.</li>
+                </ul>
+            </li>
+            <li><strong>Identification Quiz (Fill-in-the-blanks style):</strong>
+                <ul>
+                    <li>Select the "Generate Identification Quiz" option (or similar).</li>
+                    <li>This quiz type will present a definition (or term), and you can ask your audience to provide the corresponding term (or definition).</li>
+                    <li>Save this quiz configuration.</li>
+                </ul>
+            </li>
+        </ol>
+        <div class="screenshot-placeholder">Placeholder: Screenshot showing quiz generation options.</div>
+    </section>
+
+    <section id="managing-content">
+        <h2>Managing Your Projects & Quizzes</h2>
+        <p>On the main page, you can view and manage your saved content, ready for presentation.</p>
+        <h3>1. Viewing "My Projects"</h3>
+        <ol>
+            <li>Look for a button or dropdown labeled "My Project ▼".</li>
+            <li>Clicking this will display a list of all the projects (term sets) you've created and saved.</li>
+            <li>Each project will be shown in a box, typically with its title.</li>
+            <li><strong>Clicking on a project box</strong> will usually load that project's terms, allowing you to review them or generate new quizzes from them.</li>
+            <li><strong>Deleting a Project:</strong> Look for a trash can icon (🗑️) or a "Delete" button next to each project. Confirm the deletion when prompted.</li>
+        </ol>
+        <div class="screenshot-placeholder">Placeholder: Screenshot of "My Projects" list.</div>
+
+        <h3>2. Viewing "My Quizzes"</h3>
+        <ol>
+            <li>Use the same dropdown menu (that shows "My Project ▼") and select the "My Quizzes" option. The button text might change to "My Quizzes ▼".</li>
+            <li>This will display a list of all the quizzes you've generated and saved.</li>
+            <li>Each quiz will be shown in a box, typically with its title.</li>
+            <li><strong>Clicking on a quiz box</strong> will open that quiz in a presentation mode (e.g., redirecting you to `multiplechoice.html` or `identification.html`), ready for you to display to your audience.</li>
+            <li><strong>Deleting a Quiz:</strong> Similar to projects, look for a trash can icon (🗑️) or a "Delete" button next to each quiz. Confirm deletion.</li>
+        </ol>
+        <div class="screenshot-placeholder">Placeholder: Screenshot of "My Quizzes" list.</div>
+    </section>
+
+    <section id="presenting-quiz">
+        <h2>Presenting Your Quiz</h2>
+        <p>Once you've selected a quiz from "My Quizzes," Quizzler will prepare it for presentation to your students or audience.</p>
+        <ol>
+            <li>The quiz will load (e.g., on `multiplechoice.html` or `identification.html`), displaying one question at a time.</li>
+            <li><strong>Displaying Questions:</strong>
+                <ul>
+                    <li>Project this screen for your audience to see.</li>
+                    <li>Read the question and options (for multiple choice) aloud.</li>
+                    <li>For identification questions, present the definition/term and ask for the corresponding answer.</li>
+                </ul>
+            </li>
+            <li><strong>Audience Participation:</strong> Students can answer verbally, by raising hands, writing on paper, or using any classroom response system you prefer. Quizzler itself does not collect answers.</li>
+            <li><strong>Navigating Through Questions:</strong>
+                <ul>
+                    <li>Use "Next Question," "Previous Question," or similar controls provided on the page to move through the quiz.</li>
+                    <li>Some quizzes might have an option to reveal the correct answer after discussing the question.</li>
+                </ul>
+            </li>
+            <li><strong>Ending the Presentation:</strong> Once you've gone through all questions, you can simply close the quiz or navigate back to your dashboard.</li>
+        </ol>
+        <div class="screenshot-placeholder">Placeholder: Screenshot of a quiz question being presented (e.g., a single multiple choice question on screen, ready for display).</div>
+        <p>The goal is to facilitate an interactive session where you control the pace and discussion around each question.</p>
+    </section>
+
+    <section id="tips">
+        <h2>Tips for Using Quizzler Effectively</h2>
+        <div class="tip-box">
+            <p><strong>Be Specific with Titles:</strong> When creating projects and quizzes, use clear and descriptive titles. This makes them easier to find for your presentation sessions.</p>
+        </div>
+        <div class="tip-box">
+            <p><strong>Prepare for Discussion:</strong> Think about potential discussion points or clarifications for each question as you'll be guiding the session.</p>
+        </div>
+        <div class="tip-box">
+            <p><strong>Test Your Setup:</strong> Before presenting to an audience, do a quick run-through to ensure your display (projector, shared screen) works correctly and you're familiar with the navigation.</p>
+        </div>
+        <div class="tip-box">
+            <p><strong>Vary Quiz Types:</strong> Use both Multiple Choice and Identification formats to keep your presentations engaging and test different types of knowledge.</p>
+        </div>
+        <div class="tip-box">
+            <p><strong>Pace Yourself:</strong> Adjust the pace of presenting questions based on your audience's engagement and the complexity of the material.</p>
+        </div>
+                <div class="tip-box">
+            <p><strong>Adjust Browser Zoom for Presentation:</strong> When presenting your quiz, use your browser's zoom feature (usually Ctrl/Cmd and `+` or `-`) to adjust the size of the content on screen. This helps ensure the quiz questions and options are clearly visible and fit well on your specific display or projector setup.</p>
+        </div>
+    </section>
+
+  </div>
+
+  <footer class="tutorial-footer">
+    <p>© 2023-2024 Quizzler Team. All Rights Reserved.</p>
+    <p>Having trouble? Contact <a href="mailto:support@example-quizzler.com">support@example-quizzler.com</a></p>
+    <p><a href="index.html">Back to Quizzler App</a></p>
+  </footer>
+
+  <script>
+    // Function to read a cookie
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for(let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+        }
+        return null;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const defaultAuthContainer = document.getElementById('auth-buttons-default');
+      const loggedInAuthContainer = document.getElementById('auth-buttons-loggedin');
+      const welcomeUserMessage = document.getElementById('welcome-user-message');
+      const logoutActionLink = document.getElementById('logout-action-link');
+
+      const isLoggedIn = getCookie("isLoggedIn") === "true";
+      const username = getCookie("username"); // Get username from cookie
+
+      if (isLoggedIn) {
+          if (defaultAuthContainer) defaultAuthContainer.style.display = 'none';
+          if (loggedInAuthContainer) loggedInAuthContainer.style.display = 'flex';
+          if (welcomeUserMessage && username) {
+              welcomeUserMessage.textContent = 'Welcome, ' + username + '!';
+          } else if (welcomeUserMessage) {
+              welcomeUserMessage.textContent = 'Welcome!'; // Fallback
+          }
+          if (logoutActionLink) {
+              logoutActionLink.addEventListener('click', function(e) {
+                  e.preventDefault();
+                  window.location.href = 'logout.php';
+              });
+          }
+      } else {
+          if (defaultAuthContainer) defaultAuthContainer.style.display = 'flex';
+          if (loggedInAuthContainer) loggedInAuthContainer.style.display = 'none';
+
+          const signupButton = defaultAuthContainer ? defaultAuthContainer.querySelector(".signup") : null;
+          if (signupButton) {
+              signupButton.addEventListener("click", function () {
+                window.location.href = "signup.php";
+              });
+          }
+
+          const loginButton = defaultAuthContainer ? defaultAuthContainer.querySelector(".login") : null;
+          if (loginButton) {
+              loginButton.addEventListener("click", function () {
+                window.location.href = "login.php";
+              });
+          }
+      }
+
+      document.querySelectorAll('.tutorial-nav a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const targetId = this.getAttribute('href');
+            const targetElement = document.querySelector(targetId);
+            if (targetElement) {
+                const headerOffset = document.querySelector('.header').offsetHeight + 10;
+                const elementPosition = targetElement.getBoundingClientRect().top + window.pageYOffset;
+                const offsetPosition = elementPosition - headerOffset;
+                window.scrollTo({
+                    top: offsetPosition,
+                    behavior: "smooth"
+                });
+            }
+        });
+      });
+    });
+  </script>
+</body>
+</html>

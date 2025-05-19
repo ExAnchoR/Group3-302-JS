@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizzler - Export Preview</title>
+    <link rel="icon" type="image/png" href="logo.ico">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif; /* Matching typical questionnaire font */
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 20px 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            color: #333333; /* Default text color */
+        }
+        body.pdf-export-active #a4-page {
+            margin: 0 !important;
+            box-shadow: none !important;
+        }
+        body.pdf-export-active .top-controls,
+        body.pdf-export-active .export-final-btn-container-wrapper {
+            display: none !important;
+        }
+
+        .top-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            max-width: calc(210mm + 40px);
+            margin-bottom: 20px;
+            padding: 0 20px;
+            box-sizing: border-box;
+        }
+
+        .top-back-btn-export {
+            background-color: #6C4AB6;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 5px;
+            text-decoration: none;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+        .top-back-btn-export:hover {
+            background-color: #513495;
+        }
+
+        #a4-page {
+            width: 210mm;
+            min-height: 297mm;
+            padding: 20mm; /* Standard A4 margins for content */
+            margin: 0 auto;
+            background: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.2);
+            box-sizing: border-box;
+            font-size: 10pt; /* Base font size for questionnaire */
+        }
+
+        h1#quizTitlePreview {
+            text-align: center;
+            color: #006400; /* Dark green, similar to image */
+            margin-top: 0;
+            margin-bottom: 30px; /* More space after title */
+            font-size: 16pt; /* Larger title */
+            font-weight: bold;
+            page-break-after: avoid;
+        }
+        .question {
+            margin-bottom: 18px; /* Space between questions */
+            padding-bottom: 0; /* No extra padding needed */
+            border-bottom: none; /* No border between questions */
+            page-break-inside: avoid;
+            line-height: 1.5; /* Improved readability */
+        }
+        .question-header { /* Wrapper for number and question text */
+            margin-bottom: 8px; /* Space between question and its options */
+        }
+        .question-number {
+            display: inline;
+            font-weight: normal;
+            margin-right: 5px;
+        }
+        .question-text {
+            display: inline;
+            font-weight: normal; /* Regular weight for question text */
+        }
+        /* Remove h3 styling for question text, use spans instead */
+        .question h3 { display: none; }
+
+
+        .options {
+            list-style-type: none;
+            padding-left: 25px; /* Indent options */
+            margin-top: 0;
+            margin-bottom: 0;
+            page-break-before: avoid;
+        }
+        .options li {
+            margin-bottom: 8px; /* Space between options */
+            background: transparent; /* No background for options */
+            padding: 2px 0; /* Minimal padding */
+            border: none; /* No border for options */
+            color: #333333;
+            font-size: 10pt;
+            page-break-inside: avoid;
+            font-weight: normal; /* Ensure options are not bold by default */
+        }
+        .options li .checkbox-placeholder {
+            display: inline-block;
+            width: 10px; /* Size of the square */
+            height: 10px;
+            border: 1px solid #333;
+            margin-right: 10px; /* Space between square and option text */
+            vertical-align: middle; /* Align with text nicely */
+        }
+        .options li.correct-answer-for-pdf {
+            /* Ensure correct answer looks identical to others in this blank form style */
+            background: transparent !important;
+            color: #333333 !important;
+            border: none !important;
+            font-weight: normal !important;
+        }
+        .options li.correct-answer-for-pdf .checkbox-placeholder {
+            border: 1px solid #333 !important; /* Ensure placeholder border is consistent */
+        }
+
+
+        .export-final-btn-container-wrapper {
+            width: 100%;
+            max-width: 210mm;
+            text-align: center;
+            margin-top: 30px;
+            margin-bottom: 20px;
+        }
+        .export-final-btn {
+            background-color: #28a745;
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .export-final-btn:hover {
+            background-color: #218838;
+        }
+        .export-final-btn:disabled {
+            background-color: #ccc;
+            cursor: not-allowed;
+        }
+        .message {
+             text-align: center;
+             padding: 15px;
+             margin-top: 20px;
+             border-radius: 8px;
+             font-weight: bold;
+             background-color: #f8d7da; color: #721c24; border: 1px solid #f5c6cb;
+        }
+        .message.info {
+            background-color: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb;
+        }
+
+        @media print {
+            body {
+                 margin: 0 !important;
+                 padding: 0 !important;
+                 background: white !important;
+                 font-size: 10pt; /* Ensure base font size for printing */
+            }
+            .top-controls, .export-final-btn-container-wrapper {
+                display: none !important;
+            }
+            #a4-page {
+                box-shadow: none;
+                border: none;
+                width: 100%;
+                min-height: 0;
+                margin: 0;
+                padding: 1in; /* Standard print margins */
+            }
+            h1#quizTitlePreview { font-size: 16pt; color: #006400; }
+            .question { margin-bottom: 15px; line-height: 1.4;}
+            .options { padding-left: 20px; }
+            .options li { margin-bottom: 6px; }
+            .options li .checkbox-placeholder { width: 9px; height: 9px; margin-right: 8px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="top-controls">
+        <a href="javascript:history.back()" class="top-back-btn-export">Back to Quiz View</a>
+    </div>
+
+    <div id="a4-page">
+        <h1 id="quizTitlePreview">Quiz Preview</h1>
+        <div id="quizContentPreview">
+            <!-- Quiz content will be injected here -->
+        </div>
+    </div>
+
+    <div class="export-final-btn-container-wrapper">
+        <button class="export-final-btn" id="exportPdfFinalBtn">Export to PDF</button>
+    </div>
+
+    <script>
+        const quizTitleElement = document.getElementById('quizTitlePreview');
+        const quizContentElement = document.getElementById('quizContentPreview');
+        const exportFinalBtn = document.getElementById('exportPdfFinalBtn');
+        let quizDataForExport = null;
+
+        window.addEventListener('load', () => {
+            const rawData = localStorage.getItem("quizDataForMCExport");
+            if (!rawData) {
+                quizContentElement.innerHTML = `<div class="message">Error: No quiz data found for preview. Please go back and try again.</div>`;
+                exportFinalBtn.disabled = true;
+                return;
+            }
+
+            try {
+                quizDataForExport = JSON.parse(rawData);
+                if (!quizDataForExport || !quizDataForExport.title || !quizDataForExport.questions || !Array.isArray(quizDataForExport.questions)) {
+                    throw new Error("Invalid quiz data structure.");
+                }
+
+                document.title = `Quizzler - Export Preview: ${quizDataForExport.title}`;
+                quizTitleElement.textContent = quizDataForExport.title;
+                quizContentElement.innerHTML = '';
+
+                quizDataForExport.questions.forEach((q, index) => {
+                    const questionDiv = document.createElement("div");
+                    questionDiv.className = "question";
+
+                    const escapedDef = document.createElement('div'); // To safely set text
+                    escapedDef.textContent = q.questionText || 'Missing Definition';
+
+                    // Question Header (Number + Text)
+                    const questionHeaderDiv = document.createElement("div");
+                    questionHeaderDiv.className = "question-header";
+                    questionHeaderDiv.innerHTML = `<span class="question-number">${index + 1}.</span> <span class="question-text">${escapedDef.innerHTML}</span>`; // Using innerHTML after escaping definition
+
+                    // Options
+                    const optionsUL = document.createElement("ul");
+                    optionsUL.className = "options";
+
+                    const optionsHTML = q.options.map((opt) => {
+                        const isCorrect = (opt === q.correctAnswer); // Still track this for the class
+                        const escapedOpt = document.createElement('div');
+                        escapedOpt.textContent = opt || 'Missing Option';
+                        // The 'correct-answer-for-pdf' class is styled to be neutral
+                        return `<li class="${isCorrect ? 'correct-answer-for-pdf' : ''}"><span class="checkbox-placeholder"></span>${escapedOpt.innerHTML}</li>`;
+                    }).join("");
+                    optionsUL.innerHTML = optionsHTML;
+
+                    questionDiv.appendChild(questionHeaderDiv);
+                    questionDiv.appendChild(optionsUL);
+                    quizContentElement.appendChild(questionDiv);
+                });
+
+                if (quizDataForExport.questions.length === 0) {
+                    quizContentElement.innerHTML = `<div class="message info">This quiz has no questions to export.</div>`;
+                    exportFinalBtn.disabled = true;
+                }
+
+            } catch (e) {
+                console.error("Error loading quiz for export preview:", e);
+                quizContentElement.innerHTML = `<div class="message">Error: Could not load quiz data for preview. It might be corrupted. Please go back and try again.</div>`;
+                exportFinalBtn.disabled = true;
+            }
+        });
+
+        exportFinalBtn.addEventListener('click', () => {
+            if (!quizDataForExport || quizDataForExport.questions.length === 0) {
+                alert("No quiz data loaded or no questions to export.");
+                return;
+            }
+
+            const elementToExport = document.getElementById('a4-page');
+            const bodyElement = document.body;
+            exportFinalBtn.disabled = true;
+            exportFinalBtn.textContent = "Exporting...";
+
+            bodyElement.classList.add('pdf-export-active');
+
+            const filename = (quizDataForExport.title.replace(/[^a-z0-9_.\s-]/gi, '_').toLowerCase() || 'quiz_export') + '.pdf';
+
+            const opt = {
+              margin:       0,
+              filename:     filename,
+              image:        { type: 'jpeg', quality: 0.98 },
+              html2canvas:  {
+                  scale: 2,
+                  useCORS: true,
+                  logging: false,
+                  windowWidth: elementToExport.scrollWidth,
+                  windowHeight: elementToExport.scrollHeight
+              },
+              jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+              pagebreak:    { mode: ['avoid-all', 'css', 'legacy'] }
+            };
+
+            html2pdf().set(opt).from(elementToExport).save()
+            .then(() => {
+                console.log("PDF generation successful.");
+            })
+            .catch((error) => {
+                console.error("Error exporting PDF:", error);
+                alert("Sorry, there was an error exporting the PDF. Please check the console for more details.");
+            }).finally(() => {
+                bodyElement.classList.remove('pdf-export-active');
+                exportFinalBtn.disabled = false;
+                exportFinalBtn.textContent = "Export to PDF";
+            });
+        });
+    </script>
+</body>
+</html>

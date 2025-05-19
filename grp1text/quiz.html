@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin-top: 50px;
+        }
+
+        .container {
+            margin: 20px;
+            padding: 20px;
+            background: #f1f1f1;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin-top: 20px;
+            font-size: 18px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            margin-top: 20px;
+            padding: 10px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #45a049;
+        }
+
+        h1 {
+            font-size: 40px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Quiz Time!</h1>
+
+<div class="container">
+    <h2 id="definitionDisplay">Definition will appear here...</h2>
+    <input type="text" id="termInput" placeholder="Enter Term">
+    <button onclick="checkAnswer()">Submit</button>
+</div>
+
+<script>
+    const terms = JSON.parse(localStorage.getItem("terms")) || [];
+
+    function getRandomTerm() {
+        const randomIndex
+    

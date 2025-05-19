@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        /* Your existing styles here... */
+    </style>
+</head>
+
+<body>
+    <div class="modal-content">
+        <form id="signup-form">
+            <div class="container">
+                <h1>Sign Up</h1>
+                <p>Please fill in this form to create an account.</p>
+                <hr>
+
+                <label for="fullname"><b>Full Name</b></label>
+                <input type="text" placeholder="Enter Full Name" id="fullname" name="fullname" required><br><br>
+
+                <label for="email"><b>Email</b></label>
+                <input type="email" placeholder="Enter Email" id="email" name="email" required><br><br>
+
+                <label for="password"><b>Password</b></label>
+                <input type="password" placeholder="Enter Password" id="password" name="password" required><br><br>
+
+                <div class="clearfix">
+                    <button type="button" class="cancelbtn" onclick="location.reload()">Cancel</button>
+                    <button type="submit" class="signupbtn">Sign Up</button>
+                </div>
+                <div id="message"></div>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        $(document).ready(function() {
+            // Handle form submission
+            $("#signup-form").submit(function(event) {
+                event.preventDefault();
+
+                var fullname = $("#fullname").val();
+                var email = $("#email").val();
+                var password = $("#password").val();
+
+                // Store user data in localStorage
+                localStorage.setItem("userEmail", email);
+                localStorage.setItem("userPassword", password);
+
+                // Send the data to signup.php using AJAX
+                $.ajax({
+                    type: "POST",
+                    url: "signup.php",
+                    data: {
+                        fullname: fullname,
+                        email: email,
+                        password: password
+                    },
+                    success: function(response) {
+                        var result = JSON.parse(response);
+                        if (result.success) {
+                            // Redirect to success page if successful
+                            window.location.href = "success.php?message=" + result.message;
+                        } else {
+                            // Show error message if failed
+                            $("#message").html("<p style='color: red;'>" + result.message + "</p>");
+                        }
+                    },
+                    error: function() {
+                        // Handle AJAX error
+                        $("#message").html("<p style='color: red;'>Something went wrong, please try again later.</p>");
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>

@@ -1,0 +1,425 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" href="logo.ico" />
+  <title>Quizzler</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: linear-gradient(to right, #8D72E1, #e0b7fc);
+      text-align: center;
+      font-family: Arial, sans-serif;
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 40px;
+      background: linear-gradient(to right, #8D72E1, #6C4AB6);
+      border-bottom: 2px solid white;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo {
+      width: 80px;
+      height: auto;
+    }
+
+    .title {
+      font-size: 60px;
+      font-family: fantasy;
+      color: white;
+      white-space: nowrap;
+    }
+
+    .button-container {
+      display: flex;
+      gap: 10px;
+      align-items: center; /* Added for better vertical alignment */
+    }
+
+    button, .button-container a.button-link { /* Combined styling for buttons and links as buttons */
+      padding: 5px 10px;
+      border: 2px solid white;
+      cursor: pointer;
+      border-radius: 50px;
+      background-color: #ffffff;
+      color: black;
+      text-decoration: none; /* For <a> tags */
+      font-family: Arial, sans-serif; /* Ensure consistent font */
+      font-size: inherit; /* Ensure consistent font size */
+      display: inline-block; /* For <a> tags */
+    }
+    .button-container span.welcome-message {
+        color: white;
+        margin-right: 15px;
+        font-size: 16px;
+    }
+
+    .create {
+      border-radius: 50px;
+      width: 250px;
+      height: 100px;
+      color: white;
+      background-color: #8D72E1;
+      font-size: 35px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    .create-page {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      margin-top: 50px;
+    }
+
+    .saved-terms-container {
+      margin-top: 50px;
+      padding: 20px;
+      background: rgb(229, 198, 255);
+      color: rgb(112, 112, 112);
+      border-radius: 10px;
+      width: 80%;
+      max-width: 600px;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .project-box {
+      background: white;
+      padding: 15px;
+      margin: 10px 0;
+      border-radius: 10px;
+      width: 90%;
+      box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+      text-align: center;
+      position: relative;
+    }
+    .project-box h3 {
+      display: inline-block;
+      text-align: center;
+      width: 100%;
+    }
+
+    .menu-container {
+      position: absolute;
+      top: 50px;
+      left: 0;
+      background: white;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      z-index: 999;
+      display: none;
+      flex-direction: column;
+      min-width: 160px;
+    }
+
+    .menu-container button {
+      padding: 10px 20px;
+      border: none;
+      background: white;
+      cursor: pointer;
+      font-size: 16px;
+      width: 100%;
+      text-align: left;
+    }
+
+    .menu-container button:hover {
+      background: rgb(240, 240, 240);
+    }
+
+    .toggle-section {
+      margin-top: 20px;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .toggle-button {
+      padding: 10px 20px;
+      border-radius: 30px;
+      border: none;
+      background-color: #6C4AB6;
+      color: white;
+      font-size: 18px;
+      cursor: pointer;
+    }
+
+    .delete-btn {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      padding: 5px 10px;
+      border-radius: 30px;
+      border: none;
+      background-color: #e74d3c00; /* Transparent background */
+      color: #333; /* Darker color for visibility */
+      font-size: 18px;
+      cursor: pointer;
+    }
+    .delete-btn:hover {
+      background-color: rgba(0,0,0,0.05); /* Subtle hover effect */
+    }
+
+    @media (max-width: 600px) {
+      .header {
+        flex-direction: column;
+        align-items: center;
+        padding: 10px;
+      }
+
+      .button-container {
+        margin-top: 10px;
+      }
+
+      .title {
+        font-size: 40px;
+      }
+
+      .create {
+        width: 200px;
+        height: 80px;
+        font-size: 28px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo-container">
+      <img src="logo.ico" alt="Logo" class="logo" />
+      <span class="title">QUIZZLER</span>
+    </div>
+    <!-- Container for Logged-Out state -->
+    <div class="button-container" id="auth-buttons-default">
+      <button class="signup">Sign Up</button>
+      <button class="login">Log In</button>
+    </div>
+    <!-- Container for Logged-In state (initially hidden) -->
+    <div class="button-container" id="auth-buttons-loggedin" style="display:none;">
+      <span class="welcome-message" id="welcome-user-message"></span>
+      <a href="#" id="logout-action-link" class="button-link">Log Out</a>
+    </div>
+  </div>
+
+  <div class="create-page">
+    <a href="addpage.html?mode=create">
+      <button class="create">CREATE</button>
+    </a>
+
+    <div class="toggle-section">
+      <button id="viewToggleBtn" class="toggle-button">My Project ▼</button>
+      <div id="toggleMenu" class="menu-container">
+        <button data-view="project">My Project</button>
+        <button data-view="quiz">My Quizzes</button>
+      </div>
+    </div>
+
+    <div class="saved-terms-container" id="termsBox"></div>
+    <div class="saved-terms-container" id="quizzesBox" style="display: none;"></div>
+  </div>
+
+  <script>
+    // Function to read a cookie
+    function getCookie(name) {
+        const nameEQ = name + "=";
+        const ca = document.cookie.split(';');
+        for(let i = 0; i < ca.length; i++) {
+            let c = ca[i];
+            while (c.charAt(0) === ' ') c = c.substring(1, c.length);
+            if (c.indexOf(nameEQ) === 0) return decodeURIComponent(c.substring(nameEQ.length, c.length));
+        }
+        return null;
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      const defaultAuthContainer = document.getElementById('auth-buttons-default');
+      const loggedInAuthContainer = document.getElementById('auth-buttons-loggedin');
+      const welcomeUserMessage = document.getElementById('welcome-user-message');
+      const logoutActionLink = document.getElementById('logout-action-link');
+
+      const isLoggedIn = getCookie("isLoggedIn") === "true";
+      const username = getCookie("username"); // Get username from cookie
+
+      if (isLoggedIn) {
+          defaultAuthContainer.style.display = 'none';
+          loggedInAuthContainer.style.display = 'flex';
+          if (username) {
+              welcomeUserMessage.textContent = 'Welcome, ' + username + '!';
+          } else {
+              welcomeUserMessage.textContent = 'Welcome!'; // Fallback
+          }
+          logoutActionLink.addEventListener('click', function(e) {
+              e.preventDefault();
+              // Redirect to logout.php to clear session AND cookies
+              window.location.href = 'logout.php';
+          });
+      } else {
+          defaultAuthContainer.style.display = 'flex';
+          loggedInAuthContainer.style.display = 'none';
+
+          const signupButton = defaultAuthContainer.querySelector(".signup");
+          if (signupButton) {
+              signupButton.addEventListener("click", function () {
+                window.location.href = "signup.php";
+              });
+          }
+
+          const loginButton = defaultAuthContainer.querySelector(".login");
+          if (loginButton) {
+              loginButton.addEventListener("click", function () {
+                window.location.href = "login.php";
+              });
+          }
+      }
+
+      // --- Your existing JavaScript for dropdowns, projects, quizzes ---
+      const dropdownToggle = document.getElementById("viewToggleBtn");
+      const dropdownMenu = document.getElementById("toggleMenu");
+      const termsBox = document.getElementById("termsBox");
+      const quizzesBox = document.getElementById("quizzesBox");
+
+      if (dropdownToggle && dropdownMenu && termsBox && quizzesBox) {
+          dropdownToggle.addEventListener("click", () => {
+            dropdownMenu.style.display = dropdownMenu.style.display === "flex" ? "none" : "flex";
+          });
+
+          dropdownMenu.addEventListener("click", function (e) {
+            if (e.target.tagName === "BUTTON") {
+              const view = e.target.getAttribute("data-view");
+              if (view === "project") {
+                termsBox.style.display = "flex";
+                quizzesBox.style.display = "none";
+                dropdownToggle.textContent = "My Project ▼";
+              } else if (view === "quiz") {
+                termsBox.style.display = "none";
+                quizzesBox.style.display = "flex";
+                dropdownToggle.textContent = "My Quizzes ▼";
+              }
+              dropdownMenu.style.display = "none";
+            }
+          });
+          document.addEventListener('click', function(event) {
+            if (dropdownMenu.style.display === 'flex' && !dropdownToggle.contains(event.target) && !dropdownMenu.contains(event.target)) {
+                dropdownMenu.style.display = 'none';
+            }
+          });
+      } else {
+          console.warn("Dropdown toggle or menu elements not found. Dropdown functionality may be affected.");
+      }
+    });
+
+    window.onload = function () {
+      // Your existing localStorage project/quiz loading logic can remain the same.
+      let projects = JSON.parse(localStorage.getItem("projects")) || {};
+      let displayContainer = document.getElementById("termsBox");
+
+      if (!displayContainer) {
+          console.error("Element with ID 'termsBox' not found for displaying projects.");
+      } else {
+          displayContainer.innerHTML = "";
+          if (Object.keys(projects).length > 0) {
+            Object.keys(projects).forEach((title) => {
+              let projectBox = document.createElement("div");
+              projectBox.classList.add("project-box");
+
+              const deleteBtn = document.createElement("button");
+              deleteBtn.classList.add("delete-btn");
+              deleteBtn.innerHTML = "🗑️";
+              deleteBtn.addEventListener("click", function (e) {
+                e.stopPropagation();
+                if (confirm("Are you sure you want to delete this project?")) {
+                    delete projects[title];
+                    localStorage.setItem("projects", JSON.stringify(projects));
+                    projectBox.remove();
+                    if (Object.keys(projects).length === 0) {
+                        displayContainer.innerHTML = "<p>No saved projects yet.</p>";
+                    }
+                }
+              });
+
+              projectBox.innerHTML = `<h3>${title}</h3>`;
+              projectBox.appendChild(deleteBtn);
+
+              projectBox.addEventListener("click", function () {
+                localStorage.setItem("selectedProject", JSON.stringify(projects[title]));
+                localStorage.setItem("projectTitle", title);
+                window.location.href = "print.html";
+              });
+              displayContainer.appendChild(projectBox);
+            });
+          } else {
+            displayContainer.innerHTML = "<p>No saved projects yet.</p>";
+          }
+      }
+      loadSavedQuizzes();
+    };
+
+    function loadSavedQuizzes() {
+      const quizzes = JSON.parse(localStorage.getItem("savedQuizzes") || "[]");
+      const quizzesBox = document.getElementById("quizzesBox");
+
+      if (!quizzesBox) {
+          console.error("Element with ID 'quizzesBox' not found for displaying quizzes.");
+          return;
+      }
+      quizzesBox.innerHTML = "";
+      if (quizzes.length > 0) {
+        quizzes.forEach((quiz, index) => {
+          const quizBox = document.createElement("div");
+          quizBox.classList.add("project-box");
+
+          const deleteBtn = document.createElement("button");
+          deleteBtn.classList.add("delete-btn");
+          deleteBtn.innerHTML = "🗑️";
+          deleteBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            if (confirm("Are you sure you want to delete this quiz?")) {
+                quizzes.splice(index, 1);
+                localStorage.setItem("savedQuizzes", JSON.stringify(quizzes));
+                quizBox.remove();
+                if (quizzes.length === 0) {
+                    quizzesBox.innerHTML = "<p>No saved quizzes yet.</p>";
+                }
+            }
+          });
+
+          quizBox.innerHTML = `<h3>${quiz.title}</h3>`;
+          quizBox.appendChild(deleteBtn);
+
+          quizBox.addEventListener("click", function () {
+            localStorage.setItem("selectedQuiz", JSON.stringify(quiz));
+            if (quiz.type === "multiplechoice") {
+              window.location.href = "multiplechoice.html";
+            } else if (quiz.type === "identification") {
+              window.location.href = "identification.html";
+            }
+          });
+          quizzesBox.appendChild(quizBox);
+        });
+      } else {
+        quizzesBox.innerHTML = "<p>No saved quizzes yet.</p>";
+      }
+    }
+  </script>
+</body>
+</html>

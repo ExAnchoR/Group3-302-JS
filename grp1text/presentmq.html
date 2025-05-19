@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Present - Multiple Choice</title>
+  <link rel="icon" type="image/png" href="logo.ico">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden; /* Prevent body scroll */
+    }
+
+    body {
+      background: linear-gradient(to right, #8D72E1, #e0b7fc);
+      font-family: Arial, sans-serif;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      height: 100vh; /* Ensure body takes full viewport height */
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 40px;
+      background: linear-gradient(to right, #8D72E1, #6C4AB6);
+      border-bottom: 2px solid white;
+      flex-shrink: 0;
+    }
+    .logo-container { display: flex; align-items: center; gap: 10px; }
+    .logo { width: 90px; height: auto; }
+    .title { font-size: 36px; font-family: fantasy; color: white; white-space: nowrap; }
+
+
+    .main-container {
+      flex-grow: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow: hidden; /* Prevent scroll here */
+    }
+
+    .quiz-content-box {
+        background: #8D72E1;
+        border-radius: 20px;
+        padding: 30px 40px;
+        width: 100%;
+        max-width: 1850px;
+        height: 100%;
+        max-height: 1000px; /* Or adjust as needed */
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;      /* Prevent whole box scroll */
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        color: white;
+        position: relative;
+    }
+
+
+    .question {
+      padding-bottom: 20px; /* Reduced padding */
+      margin-bottom: 25px;
+      border-bottom: 1px solid #bcaef1;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 0; /* <<< Ensure this is present */
+    }
+    .question-number {
+      font-size: 50px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      color: #ffffff;
+      flex-shrink: 0;
+    }
+    .question h3 {
+      font-size: 80px; /* <<< STARTING/MAX size */
+      margin: 0;
+      color: #ffffff;
+      line-height: 1.3;
+      overflow: hidden; /* <<< Ensure this is present */
+      transition: font-size 0.1s ease-out;
+      min-height: 0; /* <<< Ensure this is present */
+      flex-grow: 1;
+    }
+    .question h3 em { font-style: normal; font-weight: bold; }
+
+
+    .options {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 20px;
+      list-style: none;
+      padding-left: 0;
+      align-content: start;
+      margin-bottom: 20px;
+       overflow-y: auto;
+       max-height: 40vh;
+       flex-shrink: 1;
+    }
+
+    .options li {
+      background: #c7d3fa;
+      padding: 20px;
+      border-radius: 15px;
+      font-size: 40px;
+      text-align: center;
+      border: 1px solid #e0e4e8;
+      transition: background 0.2s, transform 0.1s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 80px;
+      color: #2c2c54;
+      word-wrap: break-word;
+      overflow: hidden;
+    }
+
+
+    .buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      padding-top: 15px;
+      margin-top: auto;
+      flex-shrink: 0;
+    }
+
+    button {
+      padding: 15px 35px;
+      background-color: #6C4AB6;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 22px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.1s;
+    }
+    button:disabled {
+      background-color: #a894d8;
+      opacity: 1;
+      cursor: default;
+      transform: none;
+    }
+    button:hover:enabled {
+      background-color: #5835c0;
+       transform: scale(1.03);
+    }
+
+    /* --- Media Queries --- */
+    @media (max-width: 992px) {
+        .quiz-content-box {
+            max-height: 95vh;
+        }
+        .options { max-height: 35vh; }
+    }
+    @media (max-width: 768px) {
+      .header { padding: 10px 15px; }
+      .logo { width: 70px; }
+      .title { font-size: 24px; }
+      .main-container { padding: 15px; }
+      .quiz-content-box { padding: 20px; max-height: 90vh;}
+      .question-number { font-size: 30px; }
+      .question h3 { font-size: 34px; line-height: 1.3; } /* Adjust STARTING size */
+      .question { padding-bottom: 15px; margin-bottom: 15px;}
+      .options { grid-template-columns: 1fr; gap: 15px; margin-bottom: 15px; max-height: 40vh; }
+      .options li { font-size: 18px; padding: 15px; min-height: 60px; }
+      button { font-size: 16px; padding: 10px 25px; }
+      .buttons { gap: 10px; }
+    }
+     @media (max-height: 650px) {
+         .quiz-content-box { padding: 15px 25px; max-height: 90vh;}
+         .question-number { font-size: 24px; margin-bottom: 10px;}
+         .question h3 { font-size: 28px; line-height: 1.3; } /* Adjust STARTING size */
+         .question { margin-bottom: 15px; padding-bottom: 15px; }
+         .options { max-height: 30vh; }
+         .options li { font-size: 16px; padding: 12px; min-height: 50px; }
+         .buttons { padding-top: 10px; }
+         button { font-size: 16px; padding: 10px 20px;}
+     }
+
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo-container">
+      <img src="logo.ico" alt="Logo" class="logo">
+      <span class="title">Multiple Choice Quiz</span>
+    </div>
+  </div>
+
+  <div class="main-container">
+      <div class="quiz-content-box" id="quizDisplayArea">
+          <p style="text-align: center; color: #ddd;">Loading Quiz...</p>
+      </div>
+  </div>
+
+  <script>
+    let currentQuestionIndex = 0;
+    let quizData = [];
+    const MIN_FONT_SIZE = 18; // Set minimum font size for question text
+
+    // --- UPDATED FONT ADJUSTMENT FUNCTION ---
+    /**
+     * Adjusts the font size of an element downwards until its content fits
+     * within its clientHeight without overflowing.
+     * @param {HTMLElement} element The text element to adjust.
+     * @param {number} [minSize=MIN_FONT_SIZE] The minimum font size allowed.
+     */
+    function adjustFontSizeToFit(element, minSize = MIN_FONT_SIZE) {
+        if (!element) {
+            console.error("adjustFontSizeToFit: Element not provided.");
+            return;
+        }
+        // console.log("Adjusting font size for:", element.textContent.substring(0, 30) + "...");
+
+        element.style.fontSize = ''; // Reset to CSS font-size to get starting point
+        let initialComputedSize = window.getComputedStyle(element).fontSize;
+        let currentFontSize = parseFloat(initialComputedSize);
+        // console.log(`Initial computed font size: ${initialComputedSize} (${currentFontSize}px)`);
+
+        let iterations = 0;
+        const maxIterations = 150; // Safety break
+
+        // Get initial dimensions
+        let currentScrollHeight = element.scrollHeight;
+        let currentClientHeight = element.clientHeight;
+
+        console.log(`Initial check - scrollHeight: ${currentScrollHeight}, clientHeight: ${currentClientHeight}`);
+
+        // --- ADDED CHECK for valid clientHeight ---
+        if (currentClientHeight <= 0) {
+             console.warn(`adjustFontSizeToFit: Element has clientHeight ${currentClientHeight}. Cannot determine overflow. Aborting adjustment.`);
+             return; // Exit if element height is zero or negative
+        }
+
+        // Compare scrollHeight with clientHeight
+        while (currentScrollHeight > currentClientHeight && currentFontSize > minSize && iterations < maxIterations) {
+             if (iterations === 0) {
+                 console.log(`Overflow detected: scrollHeight (${currentScrollHeight}) > clientHeight (${currentClientHeight}). Starting shrink loop.`);
+             }
+            currentFontSize -= 1; // Decrease font size by 1px
+            element.style.fontSize = currentFontSize + 'px';
+
+            // --- Re-measure heights INSIDE the loop ---
+            currentScrollHeight = element.scrollHeight;
+            currentClientHeight = element.clientHeight; // clientHeight might also change slightly with font size
+
+            // Optional: Log inside loop (can be noisy)
+            // console.log(`Iteration ${iterations + 1}: New Size ${currentFontSize}px, scrollH: ${currentScrollHeight}, clientH: ${currentClientHeight}`);
+
+            iterations++;
+        }
+
+        // console.log(`Finished adjusting. Final size: ${currentFontSize}px after ${iterations} iterations.`);
+
+        if (iterations >= maxIterations) {
+            console.warn("Max iterations reached for font size adjustment.");
+        }
+        // Final check log using the last measured heights
+        if (currentScrollHeight > currentClientHeight && currentFontSize <= minSize) {
+           console.warn(`Content still overflows at minimum font size (${minSize}px). scrollHeight: ${currentScrollHeight}, clientHeight: ${currentClientHeight}`);
+        } else if (iterations > 0) {
+             console.log(`Content fits. Final scrollHeight: ${currentScrollHeight}, clientHeight: ${currentClientHeight}`);
+        }
+    }
+    // --- END UPDATED FONT ADJUSTMENT FUNCTION ---
+
+
+    function generatePresentation() {
+      const displayArea = document.getElementById("quizDisplayArea");
+      const rawQuizData = localStorage.getItem("formattedQuizForPresentation");
+
+      displayArea.innerHTML = "";
+      quizData = [];
+
+      if (!rawQuizData) {
+        displayArea.innerHTML = "<p style='text-align: center; color: #ffdddd; font-size: 18px;'>Error: No quiz data found. Please generate a quiz first.</p>";
+        return;
+      }
+
+      try {
+        quizData = JSON.parse(rawQuizData);
+        if (!Array.isArray(quizData) || quizData.length === 0) {
+          throw new Error("Quiz data is empty or invalid.");
+        }
+      } catch (e) {
+        console.error("Error parsing quiz data:", e);
+        displayArea.innerHTML = "<p style='text-align: center; color: #ffdddd; font-size: 18px;'>Error: Could not load quiz data.</p>";
+        return;
+      }
+
+      currentQuestionIndex = 0;
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+        if (currentQuestionIndex < 0 || currentQuestionIndex >= quizData.length) {
+            console.error("Invalid question index:", currentQuestionIndex);
+            return;
+        }
+
+        const displayArea = document.getElementById("quizDisplayArea");
+        const question = quizData[currentQuestionIndex];
+
+        if (!question || typeof question.questionText === 'undefined' || !Array.isArray(question.options)) {
+             console.error("Invalid Multiple Choice question data structure:", question);
+             displayArea.innerHTML = "<p style='text-align: center; color: #ffdddd; font-size: 18px;'>Error: Corrupted question data.</p>";
+             return;
+         }
+
+         const optionsHTML = question.options.map(opt => `<li>${opt || 'N/A'}</li>`).join("");
+
+        displayArea.innerHTML = `
+          <div class="question">
+            <div class="question-number">Question ${currentQuestionIndex + 1} / ${quizData.length}</div>
+            <h3><em>${question.questionText}</em>?</h3>
+          </div>
+
+          <ul class="options">
+            ${optionsHTML}
+          </ul>
+
+          <div class="buttons">
+            <button id="prevBtn" ${currentQuestionIndex === 0 ? "disabled" : ""}>Previous</button>
+            <button id="nextBtn" ${currentQuestionIndex === quizData.length - 1 ? "disabled" : ""}>Next</button>
+          </div>
+        `;
+
+        // --- ADJUST FONT SIZE ---
+        const questionTextElement = displayArea.querySelector('.question h3');
+        if (questionTextElement) {
+             // Use requestAnimationFrame to ensure layout is stable BEFORE adjusting
+             requestAnimationFrame(() => {
+                  adjustFontSizeToFit(questionTextElement);
+             });
+        } else {
+            console.error("Could not find question text element (h3) to adjust font size.");
+        }
+        // --- END ADJUSTMENT ---
+
+
+        // Attach button listeners
+        const prevButton = document.getElementById("prevBtn");
+        const nextButton = document.getElementById("nextBtn");
+
+        if (prevButton) {
+            prevButton.addEventListener("click", prevQuestion);
+        }
+        if (nextButton) {
+             nextButton.addEventListener("click", nextQuestion);
+        }
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < quizData.length - 1) {
+          currentQuestionIndex++;
+          renderQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestionIndex > 0) {
+          currentQuestionIndex--;
+          renderQuestion();
+        }
+    }
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowRight") {
+           const nextBtn = document.getElementById('nextBtn');
+           if (nextBtn && !nextBtn.disabled) { nextQuestion(); }
+        } else if (e.key === "ArrowLeft") {
+           const prevBtn = document.getElementById('prevBtn');
+            if (prevBtn && !prevBtn.disabled) { prevQuestion(); }
+        }
+    });
+
+    window.onload = generatePresentation;
+
+  </script>
+
+</body>
+</html>

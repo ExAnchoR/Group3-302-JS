@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="logo.ico">
+    <title>Quizzler</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(to right, #8D72E1, #e0b7fc);
+            text-align: center;
+            font-family: Arial, sans-serif;
+        }
+
+        .header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 40px;
+            background: linear-gradient(to right, #8D72E1, #6C4AB6);
+            border-bottom: 2px solid white;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo {
+            width: 80px;
+            height: auto;
+        }
+
+        .title {
+            font-size: 50px;
+            font-family: fantasy;
+            color: white;
+            white-space: nowrap;
+        } 
+
+        .button-container {
+            display: flex;
+            gap: 10px;
+        }
+
+        button {
+            padding: 5px 10px;
+            border: 2px solid white;
+            cursor: pointer;
+            border-radius: 50px;
+            background-color: #ffffff;
+            color: black;
+        }
+
+        .create {
+            border-radius: 50px;
+            width: 250px;
+            height: 100px;
+            color: white;
+            background-color: #8D72E1;
+            font-size: 35px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .create-page {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-top: 50px;
+        }
+
+        .saved-terms-container {
+            margin-top: 50px;
+            padding: 20px;
+            background: rgb(229, 198, 255);
+            color: rgb(112, 112, 112);
+            border-radius: 10px;
+            width: 80%;
+            max-width: 600px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .project-box {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 10px;
+            width: 90%;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .menu-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: white;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        .menu-button:hover {
+            background: rgb(240, 240, 240);
+            border-radius: 5px;
+        }
+
+        .menu-container {
+            position: absolute;
+            top: 35px;
+            right: 10px;
+            background: white;
+            border: 1px solid black;
+            border-radius: 5px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+            display: none;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        .menu-container button {
+            padding: 5px 10px;
+            border: none;
+            background: white;
+            color: black;
+            cursor: pointer;
+            font-size: 12px;
+            text-align: left;
+            width: 100%;
+        }
+
+        .menu-container button:hover {
+            background: rgb(240, 240, 240);
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                flex-direction: column;
+                align-items: center;
+                padding: 10px;
+            }
+
+            .button-container {
+                margin-top: 10px;
+            }
+
+            .title {
+                font-size: 40px;
+            }
+
+            .create {
+                width: 200px;
+                height: 80px;
+                font-size: 28px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo-container">
+            <img src="logo.ico" alt="Logo" class="logo">
+            <span class="title">QUIZZLER</span>
+        </div>
+        <div class="button-container">
+            <button class="signin">Sign In</button>
+            <button class="login">Log In</button>
+        </div>
+    </div>
+    
+    <div class="create-page">
+        <a href="addpage.html">
+            <button class="create">CREATE</button>
+        </a>
+        
+        <div class="saved-terms-container" id="termsBox"></div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+        document.querySelector(".signin").addEventListener("click", function () {
+            window.location.href = "signup.html"; // Redirect to sign-up page
+        });
+    });
+    
+    document.addEventListener("DOMContentLoaded", function () {
+        document.querySelector(".login").addEventListener("click", function () {
+            window.location.href = "signup.html"; // Redirect to sign-up page
+        });
+    });
+        window.onload = function () {
+            let projects = JSON.parse(localStorage.getItem("projects")) || {};
+            let displayContainer = document.getElementById("termsBox");
+            displayContainer.innerHTML = "";
+    
+            if (Object.keys(projects).length > 0) {
+                Object.keys(projects).forEach((title) => {
+                    let projectBox = document.createElement("div");
+                    projectBox.classList.add("project-box");
+    
+                    let menuButton = document.createElement("button");
+                    menuButton.classList.add("menu-button");
+                    menuButton.innerHTML = "⋮";
+    
+                    menuButton.onclick = function (event) {
+                        event.stopPropagation();
+                        document.querySelectorAll(".menu-container").forEach(menu => menu.style.display = "none");
+                        let menu = this.nextElementSibling;
+                        menu.style.display = menu.style.display === "flex" ? "none" : "flex";
+                    };
+    
+                    let menuContainer = document.createElement("div");
+                    menuContainer.classList.add("menu-container");
+    
+                    let editButton = document.createElement("button");
+                    editButton.textContent = "Edit";
+                    editButton.onclick = function () { editProject(title); };
+    
+                    let deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Delete";
+                    deleteButton.onclick = function () { deleteProject(title); };
+    
+                    menuContainer.appendChild(editButton);
+                    menuContainer.appendChild(deleteButton);
+    
+                    projectBox.innerHTML = `<h3>${title}</h3>`;
+                    projectBox.appendChild(menuButton);
+                    projectBox.appendChild(menuContainer);
+    
+                    projectBox.addEventListener("click", function () {
+                        if (projects[title]) {
+                            localStorage.setItem("selectedProject", JSON.stringify(projects[title]));
+                            localStorage.setItem("projectTitle", title); 
+                            window.location.href = "print.html";
+                        }
+                    });
+    
+                    displayContainer.appendChild(projectBox);
+                });
+    
+                document.addEventListener("click", function (event) {
+                    document.querySelectorAll(".menu-container").forEach(menu => {
+                        if (!menu.contains(event.target) && !event.target.classList.contains("menu-button")) {
+                            menu.style.display = "none";
+                        }
+                    });
+                });
+            } else {
+                displayContainer.innerHTML = "<p>No saved projects yet.</p>";
+            }
+            function loadTitle() {
+                let titleElement = document.getElementById("projectTitle");
+                if (titleElement) {
+                    let savedTitle = localStorage.getItem("projectTitle") || "Sample Title";
+                    titleElement.textContent = savedTitle;
+                }
+            }
+    
+            loadTitle();
+                let editTitleBtn = document.getElementById("editTitleBtn");
+            if (editTitleBtn) {
+                editTitleBtn.addEventListener("click", function () {
+                    let titleElement = document.getElementById("projectTitle");
+                    if (titleElement) {
+                        let newTitle = prompt("Enter new project title:", titleElement.textContent);
+                        if (newTitle !== null && newTitle.trim() !== "") {
+                            titleElement.textContent = newTitle;
+                            localStorage.setItem("projectTitle", newTitle);
+                        }
+                    }
+                });
+            }
+        };
+    
+        function editProject(title) {
+        let projects = JSON.parse(localStorage.getItem("projects")) || {};
+        localStorage.setItem("editProjectTitle", title);
+        localStorage.setItem("editProjectData", JSON.stringify(projects[title]));
+        localStorage.setItem("editMode", "true"); 
+        window.location.href = "print.html"; 
+    }
+
+    
+        function deleteProject(title) {
+            let projects = JSON.parse(localStorage.getItem("projects")) || {};
+            delete projects[title];
+            localStorage.setItem("projects", JSON.stringify(projects));
+            document.getElementById("termsBox").innerHTML = "";
+            window.onload();
+        }
+    </script>
+    
+</body>
+</html>

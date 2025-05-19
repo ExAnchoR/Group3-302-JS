@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Project</title>
+    <link rel="icon" type="image/x-icon" href="logo.ico"> 
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(to right, #8D72E1, #e0b7fc);
+            color: white;
+            padding: 20px;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            cursor: pointer;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: auto;
+            background: rgba(255, 255, 255, 0.2);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        h2 {
+            margin-bottom: 15px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 12px;
+            border: 1px solid white;
+        }
+
+        th {
+            background: #6C4AB6;
+        }
+
+        td {
+            background: rgba(255, 255, 255, 0.8);
+            color: black;
+        }
+
+        .btn-container {
+            margin-top: 20px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 10px 15px;
+            background: #008CBA;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .btn:hover {
+            background: #0073a5;
+        }
+    </style>
+</head>
+<body>
+    <img src="backbtn.png" alt="Back" class="back-btn" onclick="goBack()">
+
+    <div class="container">
+        <h2>Project Details</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>Term</th>
+                    <th>Definition</th>
+                </tr>
+            </thead>
+            <tbody id="projectTableBody"></tbody>
+        </table>
+
+        <div class="btn-container">
+            <button class="btn" onclick="goToPrintPage()">Print</button>
+        </div>
+    </div>
+
+    <script>
+        function loadProject() {
+            let project = JSON.parse(localStorage.getItem("selectedProject"));
+
+            if (project && project.length > 0) {
+                let tableBody = document.getElementById("projectTableBody");
+                tableBody.innerHTML = "";
+
+                project.forEach(item => {
+                    let row = document.createElement("tr");
+                    row.innerHTML = `<td>${item.term}</td><td>${item.definition}</td>`;
+                    tableBody.appendChild(row);
+                });
+            } else {
+                document.querySelector(".container").innerHTML = "<h2>No project selected.</h2>";
+            }
+        }
+
+        function goBack() {
+            window.location.href = "frontpage.html";
+        }
+
+        function goToPrintPage() {
+            window.location.href = "print.html";
+        }
+
+        window.onload = loadProject;
+    </script>
+
+</body>
+</html>

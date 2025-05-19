@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Quizzler - Project</title> <!-- Added context to title -->
+  <link rel="icon" type="image/x-icon" href="logo.ico">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      background: linear-gradient(to right, #8D72E1, #e0b7fc);
+      margin: 0;
+      padding: 0;
+      padding-bottom: 50px; /* Add some padding at the bottom */
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 40px;
+      background: linear-gradient(to right, #8D72E1, #6C4AB6);
+      border-bottom: 2px solid white;
+    }
+
+    .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logo {
+      width: 80px;
+      height: auto;
+    }
+
+    .title {
+      font-size: 60px;
+      font-family: fantasy;
+      color: white;
+      white-space: nowrap;
+    }
+
+    .back-btn {
+      width: 50px;
+      height: auto;
+      cursor: pointer;
+      position: absolute;
+      top: 120px; /* Adjust as needed based on header height */
+      left: 20px;
+      z-index: 10; /* Ensure it's above other content if necessary */
+    }
+
+    .button-container {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 15px;
+      margin-top: 130px; /* Space below header/back button */
+    }
+
+    #generateQuizBtn, #editProjectBtn {
+      padding: 10px 15px;
+      font-size: 16px;
+      background-color: #6C4AB6;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: background-color 0.2s ease; /* Smooth hover transition */
+    }
+
+    #generateQuizBtn:hover, #editProjectBtn:hover {
+      background-color: #8D72E1;
+    }
+
+    .paper {
+      margin: 20px auto; /* Give some margin top/bottom */
+      background: white;
+      padding: 20px;
+      border: 1px solid black;
+      width: 8.27in; /* A4 width */
+      /* Let height be determined by content, up to a max */
+      min-height: 11.69in; /* A4 height - optional minimum */
+      box-sizing: border-box;
+      color: black; /* Ensure text inside paper is black */
+    }
+
+    #projectTitle {
+        margin-bottom: 25px; /* Space between title and table */
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      table-layout: fixed; /* Helps control column width */
+    }
+
+    th, td {
+      padding: 12px;
+      border: 1px solid black;
+      text-align: left;
+      word-wrap: break-word; /* Wrap long words */
+      vertical-align: top; /* Align content to top of cell */
+    }
+
+    th {
+      background-color: #f0f0f0;
+      font-weight: bold; /* Make headers bold */
+    }
+
+    td {
+      /* pointer-events: none; Re-enable pointer events if needed, but generally not needed for display */
+      background-color: white; /* Ensure td background is white */
+    }
+
+    /* Specific column widths */
+    th:nth-child(1), td:nth-child(1) { width: 30%; } /* Term column */
+    th:nth-child(2), td:nth-child(2) { width: 70%; } /* Definition column */
+
+
+    /* Quiz Popup Styles */
+    #quizPopup {
+      display: none; /* Hidden by default */
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0,0,0,0.6);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    #quizPopup > div { /* Style the inner div of the popup */
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+      color: black; /* Text color inside popup */
+    }
+
+    /* Base style for ALL buttons inside the popup */
+    #quizPopup button {
+        padding: 10px 20px; /* Consistent padding */
+        font-size: 16px;   /* Consistent font size */
+        margin: 10px 5px;  /* Consistent margin */
+        border: 1px solid #bbb; /* Default border */
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease; /* Smooth transition */
+    }
+
+    /* Specific initial style for the CHOICE buttons (grey) */
+    #quizPopup #multipleChoiceBtn,
+    #quizPopup #identificationBtn {
+      background-color: #ccc; /* Initial grey background */
+      color: #333;          /* Darker text for grey background */
+      border-color: #bbb;
+    }
+
+    /* Hover effect for the CHOICE buttons when NOT selected */
+    #quizPopup #multipleChoiceBtn:not(.selected):hover,
+    #quizPopup #identificationBtn:not(.selected):hover {
+      background-color: #bbb; /* Slightly darker grey on hover */
+      border-color: #aaa;
+    }
+
+    /* Style for the SELECTED choice button (purple) */
+    #quizPopup .selected {
+      background-color: #5835c0 !important; /* Purple background */
+      color: white !important;               /* White text */
+      border: 2px solid #6C4AB6 !important; /* Matching border */
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Subtle shadow */
+    }
+
+    /* Style for Generate/Cancel buttons */
+    #quizPopup button:not(#multipleChoiceBtn):not(#identificationBtn) {
+        background-color: #e0e0e0; /* A slightly different grey */
+        color: #444;
+        border-color: #ccc;
+    }
+     #quizPopup button:not(#multipleChoiceBtn):not(#identificationBtn):hover {
+        background-color: #d0d0d0;
+        border-color: #bbb;
+     }
+
+    /* Input field in popup */
+     #quizPopup input[type="number"] {
+         padding: 8px;
+         width: 70px;
+         margin-left: 5px;
+         border: 1px solid #ccc;
+         border-radius: 4px;
+         text-align: center;
+     }
+
+    .error-message { /* Style for potential error messages */
+      color: red;
+      font-weight: bold;
+      margin-top: 10px;
+      display: block; /* Make it block to appear on its own line */
+    }
+
+
+    /* Print-specific styles */
+    @media print {
+      body {
+          background: none; /* Remove background gradient for printing */
+      }
+      .header, .button-container, .back-btn, #quizPopup {
+        display: none !important; /* Hide non-essentials */
+      }
+      .paper {
+        border: none; /* Remove paper border for print */
+        margin: 0; /* Remove margin */
+        width: 100%; /* Use full printable width */
+        height: auto; /* Allow height to adjust */
+        box-shadow: none; /* Remove shadow */
+        min-height: 0; /* Remove min-height */
+      }
+      table, th, td {
+          border: 1px solid #666; /* Lighter border for print */
+          color: black; /* Ensure black text */
+      }
+      th {
+          background-color: #eee; /* Lighter header background */
+      }
+    }
+
+  </style>
+</head>
+<body>
+    <div class="header">
+      <div class="logo-container">
+        <img src="logo.ico" alt="Logo" class="logo" />
+        <span class="title">QUIZZLER</span>
+      </div>
+    </div>
+
+    <!-- Use an anchor tag for navigation -->
+    <a href="frontpage.html">
+      <img src="backbtn.png" alt="Back" class="back-btn">
+    </a>
+
+    <div class="button-container">
+      <button id="generateQuizBtn" onclick="showQuizPopup()">Generate Quiz</button>
+      <button id="editProjectBtn" onclick="editProject()">Edit</button>
+      <!-- Consider adding a Print button -->
+      <!-- <button id="printBtn" onclick="window.print()">Print</button> -->
+    </div>
+
+    <div id="paper" class="paper">
+      <h2 id="projectTitle" contenteditable="false">Project Details</h2>
+      <table>
+        <thead>
+          <tr>
+            <th>Term</th>
+            <th>Definition</th>
+          </tr>
+        </thead>
+        <tbody id="projectTableBody">
+            <!-- Project terms will be loaded here by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Quiz Generation Popup -->
+    <div id="quizPopup"> <!-- Removed inline style, controlled by CSS -->
+      <div> <!-- Inner div for styling -->
+        <h2>Choose Quiz Type</h2>
+        <!-- Buttons now styled via CSS classes -->
+        <button id="multipleChoiceBtn" onclick="selectQuizType('multiple')">Multiple Choice</button>
+        <button id="identificationBtn" onclick="selectQuizType('identification')">Identification</button>
+        <br><br>
+        <label for="numQuestions"><strong>Number of items:</strong></label>
+        <input type="number" id="numQuestions" placeholder="All" min="1"> <!-- Added min attribute -->
+        <br>
+        <span id="quizError" class="error-message" style="display: none;"></span> <!-- Placeholder for errors -->
+        <br>
+        <button onclick="generateQuiz()">Generate</button> <!-- Removed selectedQuizType arg, get it inside func -->
+        <button onclick="closeQuizPopup()">Cancel</button>
+      </div>
+    </div>
+
+  <!-- External JS libraries (if any, like html2pdf) usually go before your script -->
+  <!-- <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script> -->
+
+  <script>
+  let selectedQuizType = "";
+
+  function showQuizPopup() {
+    selectedQuizType = "";
+    document.getElementById("multipleChoiceBtn").classList.remove("selected");
+    document.getElementById("identificationBtn").classList.remove("selected");
+    document.getElementById("numQuestions").value = "";
+    document.getElementById("numQuestions").placeholder = "All";
+    document.getElementById("quizError").textContent = "";
+    document.getElementById("quizError").style.display = "none";
+
+    const validTermsCount = Array.from(document.querySelectorAll("#projectTableBody tr"))
+      .filter(row => row.cells.length >= 2 && row.cells[0].textContent.trim() && row.cells[1].textContent.trim())
+      .length;
+
+    const numInput = document.getElementById("numQuestions");
+    numInput.max = validTermsCount > 0 ? validTermsCount : 1;
+    numInput.placeholder = validTermsCount > 0 ? `Max ${validTermsCount}` : "N/A";
+
+    document.getElementById("quizPopup").style.display = "flex";
+  }
+
+  function closeQuizPopup() {
+    document.getElementById("quizPopup").style.display = "none";
+  }
+
+  function selectQuizType(type) {
+    selectedQuizType = type;
+
+    const multipleChoiceBtn = document.getElementById("multipleChoiceBtn");
+    const identificationBtn = document.getElementById("identificationBtn");
+
+    multipleChoiceBtn.classList.remove("selected");
+    identificationBtn.classList.remove("selected");
+
+    if (type === "multiple") {
+      multipleChoiceBtn.classList.add("selected");
+    } else if (type === "identification") {
+      identificationBtn.classList.add("selected");
+    }
+
+    document.getElementById("quizError").style.display = "none";
+  }
+
+  function shuffleArray(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+
+  function generateQuiz() {
+    const quizErrorElement = document.getElementById("quizError");
+    quizErrorElement.textContent = "";
+    quizErrorElement.style.display = "none";
+
+    if (!selectedQuizType) {
+      quizErrorElement.textContent = "Please select a quiz type.";
+      quizErrorElement.style.display = "block";
+      return;
+    }
+
+    let allTerms = [];
+    const rows = document.querySelectorAll("#projectTableBody tr");
+
+    rows.forEach(row => {
+      if (row.cells.length >= 2) {
+        let term = row.cells[0].textContent.trim();
+        let definition = row.cells[1].textContent.trim();
+        if (term && definition) {
+          allTerms.push({ term, definition });
+        }
+      }
+    });
+
+    if (allTerms.length === 0) {
+      quizErrorElement.textContent = "No valid terms available to generate a quiz.";
+      quizErrorElement.style.display = "block";
+      return;
+    }
+
+    const numInput = document.getElementById("numQuestions");
+    let numItemsSelected = parseInt(numInput.value);
+
+    if (isNaN(numItemsSelected) || numInput.value.trim() === "") {
+      numItemsSelected = allTerms.length;
+    } else if (numItemsSelected < 1) {
+      quizErrorElement.textContent = "Number of items must be at least 1.";
+      quizErrorElement.style.display = "block";
+      return;
+    } else if (numItemsSelected > allTerms.length) {
+      quizErrorElement.textContent = `You can only generate up to ${allTerms.length} items.`;
+      quizErrorElement.style.display = "block";
+      return;
+    }
+
+    shuffleArray(allTerms);
+    let selectedTerms = allTerms.slice(0, numItemsSelected);
+
+    const quizTitle = document.getElementById("projectTitle").textContent || "Untitled Quiz";
+
+    // Store to localStorage
+    localStorage.setItem("quizData", JSON.stringify(selectedTerms));
+    localStorage.setItem("quizTitle", quizTitle);
+
+    // Debug logs
+    console.log("Preparing to send data to savequiz.php...");
+    console.log(`Generating ${selectedQuizType} quiz with ${selectedTerms.length} randomly selected items.`);
+    console.log("FETCH CALL STARTING");
+
+    fetch('savequiz.php', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        quizType: selectedQuizType,
+        quizTitle: quizTitle,
+        quizData: selectedTerms
+      }),
+    })
+    .then(response => response.text())
+    .then(result => {
+      console.log("Server response:", result);
+      if (result.trim() === "success") {
+        console.log("✅ Quiz data saved. Redirecting...");
+        if (selectedQuizType === "multiple") {
+          window.location.href = "multiplechoice.html";
+        } else if (selectedQuizType === "identification") {
+          window.location.href = "identification.html";
+        }
+      } else {
+        console.error("❌ Server error:", result);
+        quizErrorElement.textContent = "Failed to save quiz: " + result;
+        quizErrorElement.style.display = "block";
+      }
+    })
+    .catch(error => {
+      console.error("❌ Error saving quiz data to backend:", error);
+      quizErrorElement.textContent = "Failed to save quiz. Please try again.";
+      quizErrorElement.style.display = "block";
+    });
+  }
+
+  function editProject() {
+    window.location.href = "addpage.html?mode=edit";
+  }
+
+  function loadPrintTitle() {
+    let savedTitle = localStorage.getItem("projectTitle") || "Project Details";
+    let titleElement = document.getElementById("projectTitle");
+    if (titleElement) {
+      titleElement.textContent = savedTitle;
+      document.title = `Quizzler - ${savedTitle}`;
+    }
+  }
+
+  function loadProject() {
+    let project = [];
+    try {
+      const projectData = localStorage.getItem("selectedProject");
+      if (projectData) {
+        project = JSON.parse(projectData);
+        if (!Array.isArray(project)) {
+          console.error("Stored project data ('selectedProject') is not an array. Resetting.");
+          project = [];
+        }
+      } else {
+        project = [];
+      }
+    } catch (e) {
+      console.error("Error parsing project data from localStorage ('selectedProject'):", e);
+      project = [];
+    }
+
+    const tableBody = document.getElementById("projectTableBody");
+    tableBody.innerHTML = "";
+
+    if (project && project.length > 0) {
+      project.forEach(item => {
+        if (item && typeof item.term === 'string' && typeof item.definition === 'string') {
+          let row = tableBody.insertRow();
+          let cell1 = row.insertCell();
+          let cell2 = row.insertCell();
+          cell1.textContent = item.term.trim();
+          cell2.textContent = item.definition.trim();
+        }
+      });
+    } else {
+      let row = tableBody.insertRow();
+      let cell = row.insertCell();
+      cell.colSpan = 2;
+      cell.textContent = "No project terms loaded or project is empty.";
+      cell.style.textAlign = "center";
+      cell.style.fontStyle = "italic";
+      cell.style.color = "#666";
+    }
+  }
+
+  window.onload = function () {
+    loadPrintTitle();
+    loadProject();
+  };
+</script>
+
+
+
+</body>
+</html>

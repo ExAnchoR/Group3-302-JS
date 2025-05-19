@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Present - Identification</title>
+  <link rel="icon" type="image/png" href="logo.ico">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    html, body {
+      height: 100%;
+      overflow: hidden; 
+    }
+
+    body {
+      background: linear-gradient(to right, #8D72E1, #e0b7fc);
+      font-family: Arial, sans-serif;
+      color: #333;
+      display: flex;
+      flex-direction: column;
+      height: 100vh; 
+    }
+
+    .header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 40px;
+      background: linear-gradient(to right, #8D72E1, #6C4AB6);
+      border-bottom: 2px solid white;
+      flex-shrink: 0; 
+    }
+    .logo-container { display: flex; align-items: center; gap: 10px; }
+    .logo { width: 90px; height: auto; }
+    .title { font-size: 36px; font-family: fantasy; color: white; white-space: nowrap; }
+
+    .main-container {
+      flex-grow: 1; 
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+      overflow: hidden; 
+    }
+
+    .quiz-content-box {
+        background: #8D72E1;
+        border-radius: 20px;
+        padding: 30px 40px; 
+        width: 100%;
+        max-width: 1700px;
+        height: 100%; 
+        max-height: 800px; 
+        display: flex;
+        flex-direction: column;
+        box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+        color: white;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .question-area {
+      flex-grow: 1; 
+      display: flex;
+      flex-direction: column;
+      justify-content: center; 
+      align-items: center; 
+      text-align: center; 
+      min-height: 0;
+      overflow: hidden;
+      padding: 10px 0; 
+    }
+
+    .question-number {
+      position: absolute;   
+      top: 20px;            
+      left: 30px;           
+      font-size: 50px;      
+      font-weight: bold;
+      color: #ffffff;
+      z-index: 10;          
+    }
+
+    .question-text {
+      font-size: 60px; /* Starting size, JS will adjust */
+      color: #ffffff;
+      line-height: 1.4;
+      max-width: 95%; 
+      width: 100%;
+      overflow-y: auto; 
+      min-height: 0;
+      padding: 0 10px; 
+      /* --- TEXT JUSTIFICATION ADDED --- */
+      text-align: justify;
+      text-align-last: left; /* Or 'center', 'auto' based on preference */
+    }
+    .question-text strong {
+         font-weight: bolder;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: flex-end;
+      gap: 15px;
+      padding-top: 15px;
+      margin-top: auto; 
+      flex-shrink: 0; 
+    }
+    button {
+      padding: 15px 35px;
+      background-color: #6C4AB6;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background-color 0.3s, transform 0.1s;
+    }
+    button:disabled {
+      background-color: #a894d8;
+      opacity: 1;
+      cursor: default;
+      transform: none;
+    }
+    button:hover:enabled {
+      background-color: #5835c0;
+       transform: scale(1.03);
+    }
+
+    @media (max-width: 992px) { }
+
+    @media (max-width: 768px) {
+      .header { padding: 10px 15px; }
+      .logo { width: 70px; }
+      .title { font-size: 24px; }
+      .main-container { padding: 15px; }
+      .quiz-content-box { padding: 20px; }
+      .question-number {
+          font-size: 16px; /* Adjusted, was 50px before, now smaller for this media query */
+          top: 15px;
+          left: 20px;
+      }
+      .question-text { font-size: 38px; } 
+      button { font-size: 16px; padding: 10px 25px; }
+      .buttons { gap: 10px; }
+    }
+     @media (max-height: 650px) {
+         .quiz-content-box { padding: 15px 25px; }
+         .question-number {
+             font-size: 16px; /* Adjusted, was 50px before */
+             top: 10px;
+             left: 15px;
+         }
+         .question-text { font-size: 34px; } 
+         .question-area { padding: 5px 0; } 
+         .buttons { padding-top: 10px; }
+         button { font-size: 16px; padding: 10px 20px;}
+     }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="logo-container">
+      <img src="logo.ico" alt="Logo" class="logo">
+      <span class="title">Identification Quiz</span>
+    </div>
+  </div>
+
+  <div class="main-container">
+      <div class="quiz-content-box" id="quizDisplayArea">
+          <p style="text-align: center; color: #ddd;">Loading Quiz...</p>
+      </div>
+  </div>
+  <script>
+    let currentQuestionIndex = 0;
+    let quizData = []; 
+
+    const MIN_FONT_SIZE = 16; 
+
+    function adjustFontSizeToFit(element, minSize = MIN_FONT_SIZE) {
+        if (!element) return;
+        element.style.fontSize = ''; 
+        let currentFontSize = parseFloat(window.getComputedStyle(element).fontSize);
+        let iterations = 0;
+        const maxIterations = 100; 
+
+        while (element.scrollHeight > element.offsetHeight && currentFontSize > minSize && iterations < maxIterations) {
+            currentFontSize -= 1; 
+            element.style.fontSize = currentFontSize + 'px';
+            iterations++;
+        }
+        if (element.scrollHeight > element.offsetHeight) {
+           console.warn("Content still overflows at minimum font size:", element.textContent.substring(0,50)+"...");
+        }
+    }
+
+    function generatePresentation() {
+      const displayArea = document.getElementById("quizDisplayArea");
+      const rawQuizData = localStorage.getItem("formattedQuizForPresentation");
+      displayArea.innerHTML = "";
+      quizData = [];
+
+      if (!rawQuizData) {
+        displayArea.innerHTML = "<p style='text-align: center; color: #ffdddd; font-size: 18px;'>Error: No quiz data found. Please generate a quiz first.</p>";
+        return;
+      }
+      try {
+        quizData = JSON.parse(rawQuizData);
+        if (!Array.isArray(quizData) || quizData.length === 0 || typeof quizData[0].term === 'undefined') { 
+          throw new Error("Quiz data is empty or invalid for Identification.");
+        }
+      } catch (e) {
+        console.error("Error parsing quiz data:", e);
+        displayArea.innerHTML = "<p style='text-align: center; color: #ffdddd; font-size: 18px;'>Error: Could not load quiz data.</p>";
+        return;
+      }
+      currentQuestionIndex = 0;
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+        if (currentQuestionIndex < 0 || currentQuestionIndex >= quizData.length) {
+            console.error("Invalid question index:", currentQuestionIndex);
+            return;
+        }
+        const displayArea = document.getElementById("quizDisplayArea");
+        const question = quizData[currentQuestionIndex];
+
+        if (!question || typeof question.definition === 'undefined') { 
+             console.error("Invalid identification question data structure at index " + currentQuestionIndex + ":", question);
+             displayArea.innerHTML = "<p style='text-align: center; color: red; font-size: 18px;'>Error: Corrupted question data (missing definition).</p>";
+             return;
+         }
+        displayArea.innerHTML = `
+          <div class="question-area">
+            <div class="question-number">Question ${currentQuestionIndex + 1} / ${quizData.length}</div>
+            <div class="question-text"><strong>${question.definition}</strong></div>
+          </div>
+          <div class="buttons">
+            <button id="prevBtn" ${currentQuestionIndex === 0 ? "disabled" : ""}>Previous</button>
+            <button id="nextBtn" ${currentQuestionIndex === quizData.length - 1 ? "disabled" : ""}>Next</button>
+          </div>
+        `;
+        const questionTextElement = displayArea.querySelector('.question-text');
+        adjustFontSizeToFit(questionTextElement);
+
+        const prevButton = document.getElementById("prevBtn");
+        const nextButton = document.getElementById("nextBtn");
+        if (prevButton) prevButton.addEventListener("click", prevQuestion);
+        if (nextButton) nextButton.addEventListener("click", nextQuestion);
+    }
+
+    function nextQuestion() {
+        if (currentQuestionIndex < quizData.length - 1) {
+          currentQuestionIndex++;
+          renderQuestion();
+        }
+    }
+
+    function prevQuestion() {
+        if (currentQuestionIndex > 0) {
+          currentQuestionIndex--;
+          renderQuestion();
+        }
+    }
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "ArrowRight") {
+           const nextBtn = document.getElementById('nextBtn');
+           if (nextBtn && !nextBtn.disabled) nextBtn.click();
+        } else if (e.key === "ArrowLeft") {
+           const prevBtn = document.getElementById('prevBtn');
+            if (prevBtn && !prevBtn.disabled) prevBtn.click();
+        }
+    });
+
+    window.onload = generatePresentation;
+  </script>
+</body>
+</html>
